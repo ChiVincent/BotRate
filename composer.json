@@ -1,0 +1,14 @@
+{
+    "name": "chivincent/bot-rate",
+    "description": "A library to get live exchage rate from Taiwan Bank.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vincent Chi",
+            "email": "admin@chivincent.net"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
