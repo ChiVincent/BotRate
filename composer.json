@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-	    "Chivincent\\BotRate\\": "src/"
+	        "Chivincent\\BotRate\\": "src/"
         }
     }
 }
