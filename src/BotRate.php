@@ -4,11 +4,13 @@ namespace Chivincent\BotRate;
 
 use GuzzleHttp\Client;
 use League\Csv\Reader;
+use Psr\Http\Message\ResponseInterface;
 
 class BotRate
 {
     const URL = 'http://rate.bot.com.tw/xrt/flcsv/0/day';
     protected $data;
+    protected $timestamp;
 
     public function __construct()
     {
@@ -24,6 +26,8 @@ class BotRate
         ]);
 
         $this->data = $response->getBody()->getContents();
+        $this->timestamp = $this->updateTime($response);
+
 
         return $this;
     }
@@ -31,35 +35,45 @@ class BotRate
     public function toJson($currency = null): string
     {
         $reader = Reader::createFromString($this->data);
-        $rate = [];
+        $keys = [];
+        $rate = [
+            'timestamp' => $this->timestamp,
+        ];
 
         foreach ($reader as $index => $row) {
-            if ($index === 0) continue;
+            if ($index === 0) {
+                $keys = $row;
+                continue;
+            }
 
             $tmp = [];
-            $tmp['幣別'] = $row[0];
-            $tmp['本行買入']['現金'] = $row[2];
-            $tmp['本行買入']['即期'] = $row[3];
-            $tmp['本行買入']['遠期10天'] = $row[4];
-            $tmp['本行買入']['遠期30天'] = $row[5];
-            $tmp['本行買入']['遠期60天'] = $row[6];
-            $tmp['本行買入']['遠期90天'] = $row[7];
-            $tmp['本行買入']['遠期120天'] = $row[8];
-            $tmp['本行買入']['遠期150天'] = $row[9];
-            $tmp['本行買入']['遠期180天'] = $row[10];
-            $tmp['本行賣出']['現金'] = $row[12];
-            $tmp['本行賣出']['即期'] = $row[13];
-            $tmp['本行賣出']['遠期10天'] = $row[14];
-            $tmp['本行賣出']['遠期30天'] = $row[15];
-            $tmp['本行賣出']['遠期60天'] = $row[16];
-            $tmp['本行賣出']['遠期90天'] = $row[17];
-            $tmp['本行賣出']['遠期120天'] = $row[18];
-            $tmp['本行賣出']['遠期150天'] = $row[19];
-            $tmp['本行賣出']['遠期180天'] = $row[20];
+            $tmp[$keys[0]] = $row[0];
+
+            for ($i = 2 ; $i <= 10 ; $i++) {
+                $tmp[$row[1]][$keys[$i]] = $row[$i];
+            }
+            for ($i = 12 ; $i <= 20 ; $i++) {
+                $tmp[$row[11]][$keys[$i]] = $row[$i];
+            }
 
             array_push($rate, $tmp);
         }
 
-        return json_encode($rate);
+        if (json_encode($rate) != false)
+            return json_encode($rate);
+        else
+            return json_encode([]);
+    }
+
+    protected function updateTime(ResponseInterface $response): int
+    {
+        $contentDisposition = $response->getHeader('Content-Disposition')[0];
+        $match = [];
+
+        preg_match('/ExchangeRate@(.*).csv/', $contentDisposition, $match);
+        if (isset($match[1]))
+            return strtotime($match[1]);
+
+        return -1;
     }
 }
