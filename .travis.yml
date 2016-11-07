@@ -1,0 +1,14 @@
+language: php
+
+php:
+  - 7.0
+
+sudo: false
+
+env:
+  - APP_DEBUG=false
+
+install:
+  - composer install --prefer-dist --optimize-autoloader --quiet
+
+script: phpunit --bootstrap vendor/autoload.php tests/BotRateTest.php
