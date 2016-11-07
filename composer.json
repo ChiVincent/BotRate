@@ -1,6 +1,6 @@
 {
     "name": "chivincent/bot-rate",
-    "description": "A library to get live exchage rate from Taiwan Bank.",
+    "description": "A library to get live exchange rate from Taiwan Bank.",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -16,7 +16,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.6"
-    }
+    },
     "autoload": {
         "psr-4": {
 	    "Chivincent\\BotRate\\": "src/"
