@@ -19,3 +19,7 @@ require __DIR__.'/vendor/autoload.php';
 $botRate = new Chivincent\BotRate\BotRate();
 $botRate->fetch()->toJson(); // json string
 ```
+
+## LICENSE
+
+This library is under [MIT License](https://opensource.org/licenses/MIT). 
