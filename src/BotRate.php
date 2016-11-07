@@ -19,15 +19,14 @@ class BotRate
     public function fetch(): BotRate
     {
         $client = new Client();
-        $response = $client->get(BotRate::URL, [
+        $response = $client->get(self::URL, [
             'headers' => [
                 'Accept-Language' => 'en',
-            ]
+            ],
         ]);
 
         $this->data = $response->getBody()->getContents();
         $this->timestamp = $this->updateTime($response);
-
 
         return $this;
     }
@@ -49,20 +48,21 @@ class BotRate
             $tmp = [];
             $tmp[$keys[0]] = $row[0];
 
-            for ($i = 2 ; $i <= 10 ; $i++) {
+            for ($i = 2; $i <= 10; ++$i) {
                 $tmp[$row[1]][$keys[$i]] = $row[$i];
             }
-            for ($i = 12 ; $i <= 20 ; $i++) {
+            for ($i = 12; $i <= 20; ++$i) {
                 $tmp[$row[11]][$keys[$i]] = $row[$i];
             }
 
             array_push($rate, $tmp);
         }
 
-        if (json_encode($rate) != false)
+        if (json_encode($rate) != false) {
             return json_encode($rate);
-        else
+        } else {
             return json_encode([]);
+        }
     }
 
     protected function updateTime(ResponseInterface $response): int
@@ -71,8 +71,9 @@ class BotRate
         $match = [];
 
         preg_match('/ExchangeRate@(.*).csv/', $contentDisposition, $match);
-        if (isset($match[1]))
+        if (isset($match[1])) {
             return strtotime($match[1]);
+        }
 
         return -1;
     }
